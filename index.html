@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html lang = "eng">
+<head>
+    <meta charset="utf-8">
+     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,600" rel="stylesheet" type="text/css">
+    <title>Weather App</title>
+    </head>
+    <body>
+        
+          <h1>Current Weather</h1>
+      
+        <div class = container id = "box">
+        <div class = "location" id = "city_name"></div>
+        <div class = "date" id = "date_time"></div>
+        <div class = "description" id = "current_weather"></div>
+        <div class = "temperature" id = "current_temp"></div>
+        <div class = "convert" id = "btn_convert">Convert</div>
+            <div class = "line" id = "hum_icon">
+        <div class = "humidity" id = "humid"></div>
+        <div class = "icon" id = "icn"></div>
+             </div>
+        </div>
+        
+    <style>
+        
+        body {
+            
+   background-size: cover;
+   color: whitesmoke;
+   font-family: Lato;
+           
+            
+        }
+        .container {
+            margin: auto;
+            margin-top: 50px;
+            width: 300px;
+            height: 400px;
+            border: 1px solid #34495e;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+            
+            }
+
+        .location {
+            text-align: center;
+            margin: 30px;
+            font-size: 40px;
+        }
+        .date {
+            text-align : center;
+            margin-top: -20px;
+            font-size: 20px;
+        }
+        .description {
+            margin: 20px;
+            text-align : center;
+            font-size: 30px;
+        }
+        .temperature {
+            text-align: center;
+            margin: 40px;
+            font-size: 30px;
+        }
+        .convert {
+            
+             margin:auto;
+             border: 1px solid none;
+             display:block;
+             width:60px;
+             border-radius: 3px;
+             background: none;
+             opacity: 0.6;
+             color:white;
+             text-align: center;
+            
+        }
+        .humidity {
+             text-align: center;
+             float: left;
+             margin: 20px;
+            font-size: 20px;
+        }
+        .icon {
+             text-align: center;
+             float: right;
+             margin: 10px;
+            margin-right: 30px; 
+             font-size: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+        }
+        img { width:70px;
+            height:70px;
+        }
+        p {
+            margin-top: -1px;
+        }
+
+        
+    </style>
+    <script>
+//this function only runs when geolocation works in the browser        
+function success(position) {
+
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude; 
+    const currentTime = new Date().getHours();
+    console.log(currentTime);
+    
+   if (7 <= currentTime && currentTime < 20) {
+    if (document.body) {
+        document.body.background = "https://static.pexels.com/photos/132037/pexels-photo-132037.jpeg";
+    }
+}
+else {
+    if (document.body) {
+        document.body.background = "http://twanight.org/newTWAN/photos/3003492.jpg";
+    }
+}
+
+    let date = new Date();
+    date = date.toDateString();
+
+    var endpoint = "http://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longitude+"&APPID=dbc67c7d965daf8af0235f4e6f742707&units=metric";
+    
+    var tempC, tempF, iconCode, iconUrl, buttonF, buttonC;
+    
+ fetch(endpoint).then(weather => weather.json()).then(function(data) {  
+     
+     tempC = Math.round(data.main.temp) + String.fromCharCode(176) ;
+     tempF = Math.round(data.main.temp * 9 / 5 + 32) + String.fromCharCode(176);
+     iconCode = data.weather[0].icon;
+     iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
+     buttonF = String.fromCharCode(176) + " F";
+     buttonC = String.fromCharCode(176) + " C";
+     
+     city_name.innerHTML = data.name + " ," + data.sys.country; //add the state/ country
+     date_time.innerHTML = date;
+     current_weather.innerHTML = data.weather[0].description; //style
+     current_temp.innerHTML = tempF;
+     humid.innerHTML = data.main.humidity + " %" + "<br><p>Humidity<p>"; 
+     icn.innerHTML = "<img src='" + iconUrl  + "'>"; //enlarge icon
+     convert.innerHTML = buttonF;
+     
+     console.log(data);
+});
+    
+  const convert = document.querySelector('.convert');
+   
+  convert.addEventListener('click', function(e){
+      console.log(e);
+     if(convert.innerHTML == buttonF){
+         current_temp.innerHTML = tempC;
+         convert.innerHTML = buttonC;
+     }else if(convert.innerHTML === buttonC){
+         current_temp.innerHTML = tempF;
+         convert.innerHTML = buttonF;
+     }
+      
+  });
+    
+    
+    
+    
+ 
+}
+
+navigator.geolocation.getCurrentPosition(success);
+  </script> 
+        
+</body>        
+</html>
